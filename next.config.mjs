@@ -1,13 +1,8 @@
-/** @type {import('next').NextConfig} */
-
-const { withNetlify } = require('@netlify/next');
-
-module.exports = withNetlify({
-  reactStrictMode: true,
-});
+// next.config.mjs
+import { withNetlify } from '@netlify/next';
 
 const nextConfig = {
   reactStrictMode: true,
 };
 
-export default nextConfig;
+export default withNetlify(nextConfig);
