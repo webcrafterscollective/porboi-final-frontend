@@ -1,6 +1,3 @@
-// next.config.js
-const { withNetlify } = require('@netlify/next');
-
-module.exports = withNetlify({
+module.exports = {
   reactStrictMode: true,
-});
+};
