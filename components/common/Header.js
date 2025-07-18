@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Search, ShoppingCart, Menu, X, User, LogOut } from 'lucide-react';
+import { ShoppingCart, Menu, X, User, LogOut } from 'lucide-react';
 import { cartUtils } from '../../utils/cartUtils';
 import { useAuth } from '../../hooks/useAuth';
 import LoginModal from '../auth/LoginModal';
@@ -22,11 +22,11 @@ const Header = () => {
   useEffect(() => {
     if (isAuthenticated) {
       updateCartInfo();
-      
+
       // Listen for cart updates
       const handleCartUpdate = () => updateCartInfo();
       window.addEventListener('cartUpdated', handleCartUpdate);
-      
+
       return () => window.removeEventListener('cartUpdated', handleCartUpdate);
     }
   }, [isAuthenticated]);
@@ -36,12 +36,14 @@ const Header = () => {
     setCartTotal(cartUtils.getCartTotal());
   };
 
+  // Updated navigation menu
   const navigation = [
-    { name: 'Home', href: '/', hasDropdown: true },
-    { name: 'Pages', href: '/pages', hasDropdown: true },
-    { name: 'Events', href: '/events', hasDropdown: true },
-    { name: 'Blog', href: '/blog', hasDropdown: true },
-    { name: 'Shop', href: '/shop', hasDropdown: true },
+    { name: 'Home', href: '/', hasDropdown: false },
+    { name: 'Authors', href: '/authors', hasDropdown: false },
+    { name: 'Publishers', href: '/publishers', hasDropdown: false },
+    { name: 'Self Publication', href: '/self-publication', hasDropdown: false },
+    { name: 'Event', href: '/event', hasDropdown: false },
+    { name: 'Fashion', href: '/fashion', hasDropdown: false },
   ];
 
   const isActive = (href) => {
@@ -79,20 +81,15 @@ const Header = () => {
       <header className="bg-white shadow-sm sticky top-0 z-50">
         {/* Top Bar */}
         <div className="bg-gray-800 text-white text-center py-2 text-sm">
-          FREE SHIPPING FOR ORDERS OVER $50
+          FREE SHIPPING FOR ORDERS OVER ₹500
         </div>
 
         {/* Main Header */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-red-600 rounded flex items-center justify-center">
-                <span className="text-white font-bold text-xl">1</span>
-              </div>
-              <div className="w-8 h-8 bg-yellow-400 rounded flex items-center justify-center">
-                <span className="text-gray-800 font-bold">📖</span>
-              </div>
+            <Link href="/" className="text-2xl font-bold text-gray-900 font-serif tracking-wider">
+              porboi.in
             </Link>
 
             {/* Navigation - Desktop */}
@@ -118,15 +115,10 @@ const Header = () => {
               ))}
             </nav>
 
-            {/* Right Side - Search, Cart, User, Mobile Menu */}
+            {/* Right Side - Cart, User, Mobile Menu */}
             <div className="flex items-center space-x-4">
-              {/* Search */}
-              <button className="p-2 text-gray-700 hover:text-red-600 transition-colors">
-                <Search className="w-6 h-6" />
-              </button>
-
               {/* Cart */}
-              <Link href="/cart" onClick={handleCartClick} className="relative p-2 text-gray-700 hover:text-red-600 transition-colors">
+              <Link href="/cart" onClick={handleCartClick} className="relative flex items-center space-x-2 p-2 text-gray-700 hover:text-red-600 transition-colors">
                 <ShoppingCart className="w-6 h-6" />
                 {isAuthenticated && cartCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -135,9 +127,6 @@ const Header = () => {
                 )}
                 {isAuthenticated && (
                   <span className="hidden lg:block text-sm ml-2">${cartTotal.toFixed(2)}</span>
-                )}
-                {!isAuthenticated && (
-                  <span className="hidden lg:block text-sm ml-2">Login</span>
                 )}
               </Link>
 
@@ -225,7 +214,7 @@ const Header = () => {
                     {item.name}
                   </Link>
                 ))}
-                
+
                 {/* Mobile Auth */}
                 {!isAuthenticated && (
                   <div className="pt-4 border-t border-gray-200">
@@ -252,7 +241,7 @@ const Header = () => {
         onClose={() => setShowLoginModal(false)}
         onSwitchToSignup={switchToSignup}
       />
-      
+
       <SignupModal
         isOpen={showSignupModal}
         onClose={() => setShowSignupModal(false)}

@@ -8,7 +8,7 @@ import ProtectedRoute from '../components/common/ProtectedRoute';
 import { cartUtils } from '../utils/cartUtils';
 import { api } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
-import { validateEmail, validatePhone, validateCreditCard, validateZipCode } from '../lib/validation';
+import { validateEmail, validatePhone, validateCreditCard, validateZipCode } from '../utils/validation';
 
 const CheckoutPage = () => {
   const router = useRouter();

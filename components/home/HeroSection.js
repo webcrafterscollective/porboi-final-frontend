@@ -1,48 +1,62 @@
 // components/home/HeroSection.js
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 
 const HeroSection = ({ featuredBooks = [] }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Default hero data if no featured books provided
-  const defaultHeroData = [
+  // Updated hero data with professional copy and Pexels images
+  const heroSlides = [
     {
       id: 1,
-      title: "The all-time classics",
-      subtitle: "IT'S CHAPTERONE",
-      description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna",
-      badge: "#1 New York Times Bestseller",
-      image: "/images/hero-book-1.jpg", // You'll need to add these images
-      backgroundImage: "/images/hero-bg-1.jpg",
+      title: "Explore Worlds of Fiction",
+      subtitle: "IMAGINATION UNBOUND",
+      description: "Dive into captivating narratives and unforgettable characters. Our fiction collection spans from timeless classics to modern masterpieces.",
+      badge: "Critically Acclaimed Fiction",
+      image: "https://images.pexels.com/photos/1926988/pexels-photo-1926988.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      backgroundImage: "https://images.pexels.com/photos/261794/pexels-photo-261794.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      link: "/shop?category=fiction"
     },
     {
       id: 2,
-      title: "Fantasy Adventures",
-      subtitle: "IT'S CHAPTERONE",
-      description: "Explore magical worlds and epic adventures with our collection of fantasy novels",
-      badge: "Editor's Choice",
-      image: "/images/hero-book-2.jpg",
-      backgroundImage: "/images/hero-bg-2.jpg",
+      title: "The Art of the Essay",
+      subtitle: "PERSPECTIVES & PROSE",
+      description: "Engage with profound ideas and brilliant arguments from the world's most insightful thinkers. Discover essays that challenge and inspire.",
+      badge: "Thought-Provoking Essays",
+      image: "https://images.pexels.com/photos/3747505/pexels-photo-3747505.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      backgroundImage: "https://images.pexels.com/photos/3184454/pexels-photo-3184454.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      link: "/shop?category=essays"
     },
     {
       id: 3,
-      title: "Historical Fiction",
-      subtitle: "IT'S CHAPTERONE",
-      description: "Journey through time with our carefully curated historical fiction collection",
-      badge: "Critics' Pick",
-      image: "/images/hero-book-3.jpg",
-      backgroundImage: "/images/hero-bg-3.jpg",
+      title: "The Power of Poetry",
+      subtitle: "WORDS THAT MOVE",
+      description: "Experience the beauty and emotion of verse. Our poetry collection features iconic voices and contemporary poets who capture the human spirit.",
+      badge: "Evocative Poetry",
+      image: "https://images.pexels.com/photos/3771073/pexels-photo-3771073.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      backgroundImage: "https://images.pexels.com/photos/236111/pexels-photo-236111.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      link: "/shop?category=poetry"
+    },
+    {
+      id: 4,
+      title: "Lives of Consequence",
+      subtitle: "INSPIRING BIOGRAPHIES",
+      description: "Walk in the shoes of giants. Explore the lives of historical figures, innovators, and artists who shaped our world.",
+      badge: "Pulitzer Prize Winners",
+      image: "https://images.pexels.com/photos/762041/pexels-photo-762041.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      backgroundImage: "https://images.pexels.com/photos/716411/pexels-photo-716411.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      link: "/shop?category=biography"
     }
   ];
 
-  const slides = featuredBooks.length > 0 ? featuredBooks : defaultHeroData;
+  const slides = featuredBooks.length > 0 ? featuredBooks : heroSlides;
 
   // Auto-advance slides
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
+    }, 7000); // Increased duration for better readability
 
     return () => clearInterval(timer);
   }, [slides.length]);
@@ -65,9 +79,7 @@ const HeroSection = ({ featuredBooks = [] }) => {
       <div 
         className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
         style={{
-          backgroundImage: slides[currentSlide]?.backgroundImage 
-            ? `url(${slides[currentSlide].backgroundImage})` 
-            : 'linear-gradient(135deg, #1f2937 0%, #111827 100%)'
+          backgroundImage: `url(${slides[currentSlide].backgroundImage})` 
         }}
       >
         <div className="absolute inset-0 hero-gradient"></div>
@@ -83,54 +95,45 @@ const HeroSection = ({ featuredBooks = [] }) => {
               <div className="inline-flex items-center">
                 <div className="bg-red-600 text-white px-4 py-2 rounded-full">
                   <span className="text-sm font-semibold">
-                    {slides[currentSlide]?.badge || "#1 New York Times Bestseller"}
+                    {slides[currentSlide].badge}
                   </span>
                 </div>
               </div>
 
               {/* Subtitle */}
               <p className="text-sm uppercase tracking-wider text-gray-300">
-                {slides[currentSlide]?.subtitle || "IT'S CHAPTERONE"}
+                {slides[currentSlide].subtitle}
               </p>
 
               {/* Title */}
               <h1 className="text-4xl lg:text-6xl font-serif font-bold leading-tight text-shadow-lg">
-                {slides[currentSlide]?.title || "The all-time classics"}
+                {slides[currentSlide].title}
               </h1>
 
               {/* Description */}
               <p className="text-lg text-gray-300 max-w-lg leading-relaxed">
-                {slides[currentSlide]?.description || "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna"}
+                {slides[currentSlide].description}
               </p>
 
               {/* CTA Button */}
               <div className="pt-4">
-                <button className="btn-outline text-lg px-8 py-4">
-                  READ MORE
-                </button>
+                <Link href={slides[currentSlide].link}>
+                    <button className="btn-outline text-lg px-8 py-4">
+                        EXPLORE COLLECTION
+                    </button>
+                </Link>
               </div>
             </div>
 
             {/* Book Image */}
             <div className="flex justify-center lg:justify-end">
               <div className="relative">
-                {/* Circular Background */}
                 <div className="w-80 h-80 lg:w-96 lg:h-96 rounded-full border-4 border-white border-opacity-20 flex items-center justify-center">
-                  {slides[currentSlide]?.image ? (
-                    <img 
-                      src={slides[currentSlide].image}
-                      alt={slides[currentSlide].title}
-                      className="w-64 h-64 lg:w-80 lg:h-80 rounded-full object-cover"
-                    />
-                  ) : (
-                    // Placeholder circular design matching your screenshot
-                    <div className="w-64 h-64 lg:w-80 lg:h-80 rounded-full bg-gray-800 flex items-center justify-center text-white">
-                      <div className="text-center">
-                        <div className="text-6xl mb-4">📖</div>
-                        <div className="text-2xl font-bold">IMAGINE</div>
-                      </div>
-                    </div>
-                  )}
+                  <img 
+                    src={slides[currentSlide].image}
+                    alt={slides[currentSlide].title}
+                    className="w-64 h-64 lg:w-80 lg:h-80 rounded-full object-cover shadow-2xl"
+                  />
                 </div>
               </div>
             </div>

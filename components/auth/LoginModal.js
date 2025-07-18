@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { X, Eye, EyeOff, User, Lock } from 'lucide-react';
 import { auth } from '../../lib/auth';
+import { toast } from 'react-hot-toast';
 
 const LoginModal = ({ isOpen, onClose, onSwitchToSignup }) => {
   const [formData, setFormData] = useState({
@@ -10,31 +11,34 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup }) => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
     }));
-    setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
 
     try {
       const result = await auth.login(formData.username, formData.password);
       
       if (result.success) {
-        window.location.reload(); // Refresh to update auth state
+        toast.success('Logged in successfully!');
+        // Allow time for the toast to be seen before reloading
+        setTimeout(() => {
+          window.location.reload(); // Refresh to update auth state
+        }, 1000);
       } else {
-        setError(result.error);
+        // Use toast to show the error from the API
+        toast.error(result.error);
       }
     } catch (error) {
-      setError('An unexpected error occurred');
+      // This catch is for unexpected client-side errors
+      toast.error('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -58,12 +62,6 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup }) => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
-              {error}
-            </div>
-          )}
-
           {/* Username */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">

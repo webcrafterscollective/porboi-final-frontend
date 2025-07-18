@@ -1,13 +1,20 @@
 // utils/formatters.js
-export const formatPrice = (price, currency = 'USD') => {
-  return new Intl.NumberFormat('en-US', {
+export const formatPrice = (price, currency = 'INR') => {
+  // Ensure price is a number before formatting
+  const numericPrice = Number(price);
+  if (isNaN(numericPrice)) {
+    return ''; // Return empty string or a default value for invalid prices
+  }
+
+  return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: currency,
-  }).format(price);
+    minimumFractionDigits: 2,
+  }).format(numericPrice);
 };
 
 export const formatDate = (date) => {
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat('en-IN', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -15,7 +22,7 @@ export const formatDate = (date) => {
 };
 
 export const formatShortDate = (date) => {
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat('en-IN', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',

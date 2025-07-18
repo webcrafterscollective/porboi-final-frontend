@@ -5,7 +5,7 @@ import Header from './Header';
 import Footer from './Footer';
 import { Toaster } from 'react-hot-toast';
 
-const Layout = ({ children, title = 'ChapterOne - Bookstore', description = 'The all-time classics bookstore' }) => {
+const Layout = ({ children, title = 'Porboi', description = 'The all-time classics bookstore' }) => {
   return (
     <>
       <Head>

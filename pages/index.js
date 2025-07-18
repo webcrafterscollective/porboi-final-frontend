@@ -1,11 +1,11 @@
 // pages/index.js
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Head from 'next/head';
 import HeroSection from '../components/home/HeroSection';
 import BookGrid from '../components/home/BookGrid';
 import ServicesSection from '../components/home/ServicesSection';
 import AuthorsSection from '../components/home/AuthorsSection';
-import EventsSection from '../components/home/EventsSection';
+import BookReviewsSection from '../components/home/BookReviewsSection'; // Import the new section
 import GallerySection from '../components/home/GallerySection';
 import { api } from '../lib/api';
 
@@ -40,8 +40,8 @@ export default function Home({ featuredProducts, categories }) {
         {/* Gallery Grid */}
         <GallerySection />
 
-        {/* Events Section */}
-        <EventsSection />
+        {/* Book Reviews Section */}
+        <BookReviewsSection />
       </div>
     </>
   );
@@ -80,38 +80,3 @@ export async function getStaticProps() {
     };
   }
 }
-
-// Alternative: If you want client-side rendering instead
-// export default function Home() {
-//   const [featuredProducts, setFeaturedProducts] = useState([]);
-//   const [categories, setCategories] = useState([]);
-//   const [loading, setLoading] = useState(true);
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         const [products, cats] = await Promise.all([
-//           api.getProducts({ featured: true, per_page: 3 }),
-//           api.getCategories()
-//         ]);
-        
-//         setFeaturedProducts(products);
-//         setCategories(cats);
-//       } catch (error) {
-//         console.error('Error fetching data:', error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchData();
-//   }, []);
-
-//   if (loading) {
-//     return <LoadingSpinner size="large" text="Loading homepage..." />;
-//   }
-
-//   return (
-//     // ... same JSX as above
-//   );
-// }

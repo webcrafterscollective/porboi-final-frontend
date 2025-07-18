@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { X, Eye, EyeOff, User, Mail, Lock } from 'lucide-react';
 import { auth } from '../../lib/auth';
+import { toast } from 'react-hot-toast';
 
 const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
   const [formData, setFormData] = useState({
@@ -14,31 +15,28 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
 
   const handleChange = (e) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
     }));
-    setError('');
   };
 
   const validateForm = () => {
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      toast.error('Passwords do not match');
       return false;
     }
 
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+      toast.error('Password must be at least 6 characters long');
       return false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      setError('Please enter a valid email address');
+      toast.error('Please enter a valid email address');
       return false;
     }
 
@@ -48,8 +46,6 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-    setSuccess('');
 
     if (!validateForm()) {
       setLoading(false);
@@ -66,15 +62,15 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
       );
       
       if (result.success) {
-        setSuccess(result.message);
+        toast.success(result.message);
         setTimeout(() => {
           onSwitchToLogin();
         }, 3000);
       } else {
-        setError(result.error);
+        toast.error(result.error);
       }
     } catch (error) {
-      setError('An unexpected error occurred');
+      toast.error('An unexpected error occurred during registration.');
     } finally {
       setLoading(false);
     }
@@ -98,18 +94,6 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
-              {error}
-            </div>
-          )}
-
-          {success && (
-            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md text-sm">
-              {success}
-            </div>
-          )}
-
           {/* Name Fields */}
           <div className="grid grid-cols-2 gap-4">
             <div>

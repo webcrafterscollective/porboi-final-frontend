@@ -5,31 +5,31 @@ const AuthorsSection = () => {
   const authors = [
     {
       id: 1,
-      name: "Adam Strass",
-      role: "AUTHOR",
-      image: "/images/author-1.jpg",
-      description: "Except sint occaecat cupidatat non proident, sunt culpa qui officia deserunt mollit."
+      name: "Elena Vance",
+      role: "Bestselling Author",
+      image: "https://images.pexels.com/photos/3772510/pexels-photo-3772510.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      description: "Elena's award-winning novels masterfully blend historical detail with gripping suspense, captivating readers worldwide."
     },
     {
       id: 2,
-      name: "Jennifer Doe",
-      role: "DESIGNER", 
-      image: "/images/author-2.jpg",
-      description: "Except sint occaecat cupidatat non proident, sunt culpa qui officia deserunt mollit."
+      name: "Marcus Chen",
+      role: "Sci-Fi Visionary", 
+      image: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      description: "Marcus is celebrated for his thought-provoking science fiction that explores the future of humanity and technology."
     },
     {
       id: 3,
-      name: "James Coleman",
-      role: "CONSULTANT",
-      image: "/images/author-3.jpg", 
-      description: "Except sint occaecat cupidatat non proident, sunt culpa qui officia deserunt mollit."
+      name: "Sofia Garcia",
+      role: "Poet & Illustrator",
+      image: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", 
+      description: "Sofia combines lyrical poetry with stunning illustrations to create immersive and emotionally resonant collections."
     },
     {
       id: 4,
-      name: "Linda Heyes",
-      role: "SUPPORT",
-      image: "/images/author-4.jpg",
-      description: "Except sint occaecat cupidatat non proident, sunt culpa qui officia deserunt mollit."
+      name: "David Kim",
+      role: "Non-Fiction Expert",
+      image: "https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      description: "David's meticulously researched non-fiction books make complex historical events accessible and engaging for all."
     }
   ];
 
@@ -38,12 +38,12 @@ const AuthorsSection = () => {
       <div className="container">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <p className="text-subheading mb-4">OUR SERVICES</p>
+          <p className="text-subheading mb-4">MEET OUR LITERARY TALENT</p>
           <h2 className="text-3xl lg:text-4xl font-serif text-heading mb-6">
-            Authors of the month
+            Featured Authors of the Month
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            We are proud to feature a curated selection of talented authors each month. Discover the brilliant minds behind your favorite stories and explore their captivating works.
           </p>
         </div>
 
@@ -53,7 +53,7 @@ const AuthorsSection = () => {
             <div key={author.id} className="text-center group">
               {/* Author Image */}
               <div className="relative mb-6">
-                <div className="w-32 h-32 mx-auto rounded-full overflow-hidden">
+                <div className="w-32 h-32 mx-auto rounded-full overflow-hidden shadow-lg">
                   {author.image ? (
                     <img
                       src={author.image}

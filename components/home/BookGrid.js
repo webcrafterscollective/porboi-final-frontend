@@ -7,59 +7,47 @@ import LoadingSpinner from '../common/LoadingSpinner';
 const BookGrid = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState('Best Sellers');
-  const [categories, setCategories] = useState([]);
+  const [activeCategory, setActiveCategory] = useState('All');
 
+  // Fixed list of categories for filtering
   const filterCategories = [
     'All',
-    'Best Sellers', 
-    'Fantasy',
-    'History',
-    'Art',
-    'Love Stories'
+    'Books',
+    'Text Books',
+    'Old Books',
+    'Accessories'
   ];
 
-  // Fetch products and categories
+  // Fetch products whenever the active category changes
   useEffect(() => {
     fetchProducts();
-    fetchCategories();
-  }, []);
+  }, [activeCategory]);
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const productsData = await api.getProducts({ 
-        per_page: 6,
-        featured: activeCategory === 'Best Sellers' ? true : undefined,
-        category: activeCategory !== 'All' && activeCategory !== 'Best Sellers' 
-          ? categories.find(cat => cat.name === activeCategory)?.id 
-          : undefined
-      });
+
+      // Set up parameters for the API call
+      const params = {
+        per_page: 10, // Fetch 10 products per category
+      };
+
+      // If a specific category is selected (and not 'All'), add it to the params.
+      // Note: This assumes the WooCommerce API is set up to find categories by their name/slug.
+      if (activeCategory !== 'All') {
+        params.category = activeCategory;
+      }
+
+      const productsData = await api.getProducts(params);
       setProducts(productsData);
     } catch (error) {
       console.error('Error fetching products:', error);
-      // Fallback to mock data for development
+      // Fallback to mock data for development if the API fails
       setProducts(mockProducts);
     } finally {
       setLoading(false);
     }
   };
-
-  const fetchCategories = async () => {
-    try {
-      const categoriesData = await api.getCategories();
-      setCategories(categoriesData);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    }
-  };
-
-  // Re-fetch when category changes
-  useEffect(() => {
-    if (categories.length > 0) {
-      fetchProducts();
-    }
-  }, [activeCategory, categories]);
 
   // Mock data for development/fallback
   const mockProducts = [
@@ -70,7 +58,7 @@ const BookGrid = () => {
       images: [{ src: "/images/book-1.jpg" }],
       on_sale: false,
       stock_status: "outofstock",
-      categories: [{ name: "Best Sellers" }],
+      categories: [{ name: "Books" }],
       short_description: "JOHN STRASS"
     },
     {
@@ -80,39 +68,39 @@ const BookGrid = () => {
       images: [{ src: "/images/book-2.jpg" }],
       on_sale: false,
       stock_status: "instock",
-      categories: [{ name: "Fantasy" }],
+      categories: [{ name: "Books" }],
       short_description: "JESSICA JOHNSON"
     },
     {
       id: 3,
-      name: "Wellness And Paradise",
+      name: "University Physics Textbook",
       price: "67.00",
       images: [{ src: "/images/book-3.jpg" }],
       on_sale: false,
       stock_status: "instock",
-      categories: [{ name: "Art" }],
+      categories: [{ name: "Text Books" }],
       short_description: "JANE DOE"
     },
     {
       id: 4,
-      name: "Renaissance History",
-      price: "39.00",
-      regular_price: "47.00",
+      name: "A Rare First Edition",
+      price: "95.00",
+      regular_price: "120.00",
       images: [{ src: "/images/book-4.jpg" }],
       on_sale: true,
       stock_status: "instock",
-      categories: [{ name: "History" }],
+      categories: [{ name: "Old Books" }],
       short_description: "JAMES HOFFMAN"
     },
     {
       id: 5,
-      name: "Fantasy Storytelling",
-      price: "29.00",
+      name: "Leather Bookmark",
+      price: "15.00",
       images: [{ src: "/images/book-5.jpg" }],
       on_sale: false,
       stock_status: "instock",
-      categories: [{ name: "Fantasy" }],
-      short_description: "ADAM STRASS"
+      categories: [{ name: "Accessories" }],
+      short_description: "ARTISAN GOODS"
     }
   ];
 
@@ -136,12 +124,18 @@ const BookGrid = () => {
 
         {/* Products Grid */}
         {loading ? (
-          <LoadingSpinner size="large" text="Loading books..." />
+          <LoadingSpinner size="large" text={`Loading ${activeCategory}...`} />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            {products.length > 0 ? (
+              products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            ) : (
+              <div className="col-span-full text-center">
+                <p>No products found in this category.</p>
+              </div>
+            )}
           </div>
         )}
       </div>
