@@ -28,11 +28,10 @@ const ProductCard = ({ product }) => {
   const secondaryImage = images[1]?.src || primaryImage;
 
   // Calculate discount percentage
-  const discountPercentage = on_sale && regular_price 
+  const discountPercentage = on_sale && regular_price
     ? Math.round(((regular_price - sale_price) / regular_price) * 100)
     : 0;
 
-  // Get author from short_description or categories
   const author = short_description || categories[0]?.name || 'Unknown Author';
 
   // Handle add to cart
@@ -71,7 +70,7 @@ const ProductCard = ({ product }) => {
       {/* Product Image */}
       <div className="relative overflow-hidden">
         <Link href={productUrl}>
-          <div className="relative aspect-[4/3] bg-gray-100">
+          <div className="relative aspect-square bg-gray-100"> {/* UPDATED */}
             <img
               src={primaryImage}
               alt={name}
@@ -105,8 +104,8 @@ const ProductCard = ({ product }) => {
           <button
             onClick={handleWishlistToggle}
             className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200 ${
-              isWishlisted 
-                ? 'bg-red-600 text-white' 
+              isWishlisted
+                ? 'bg-red-600 text-white'
                 : 'bg-white text-gray-600 hover:bg-red-600 hover:text-white'
             }`}
           >
@@ -123,7 +122,7 @@ const ProductCard = ({ product }) => {
         {/* Add to Cart Button - Shows on Hover */}
         <div className="absolute bottom-0 left-0 right-0 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
           {stock_status === 'outofstock' ? (
-            <button 
+            <button
               disabled
               className="w-full bg-gray-400 text-white py-3 font-medium cursor-not-allowed"
             >
@@ -146,9 +145,10 @@ const ProductCard = ({ product }) => {
       <div className="product-card-content flex-grow flex flex-col">
         <div className="flex-grow">
             {/* Author */}
-            <p className="text-sm text-gray-500 uppercase tracking-wide mb-1">
-            {author}
-            </p>
+            <div
+              className="text-sm text-gray-500 uppercase tracking-wide mb-1"
+              dangerouslySetInnerHTML={{ __html: author }}
+            />
 
             {/* Product Name */}
             <Link href={productUrl}>

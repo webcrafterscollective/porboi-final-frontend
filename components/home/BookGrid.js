@@ -100,7 +100,7 @@ const BookGrid = () => {
   
   const handleMainCategoryClick = (categoryName) => {
     setActiveMainCategory(categoryName);
-    setActiveSubCategory(null); 
+    setActiveSubCategory(null);
   };
 
   return (
@@ -152,7 +152,7 @@ const BookGrid = () => {
         {loading ? (
           <LoadingSpinner size="large" text="Fetching books..." />
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8"> {/* UPDATED */}
             {products.length > 0 ? (
               products.map((product) => (
                 <ProductCard key={product.id} product={product} />

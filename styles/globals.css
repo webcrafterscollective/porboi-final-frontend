@@ -64,7 +64,7 @@
   }
   
   .product-card-image {
-    @apply w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105;
+    @apply w-full h-full object-contain transition-transform duration-300 group-hover:scale-105; /* UPDATED */
   }
   
   .product-card-content {
