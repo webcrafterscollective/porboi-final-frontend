@@ -1,0 +1,282 @@
+/* styles/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom font imports */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+/* Base styles */
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    @apply text-gray-900 bg-white;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    @apply font-medium;
+  }
+}
+
+/* Custom component styles */
+@layer components {
+
+/* Website Loader Styles */
+  .loader-container {
+    @apply fixed inset-0 bg-white z-[100] flex items-center justify-center;
+    animation: fadeOut 0.5s ease-in-out 1.5s forwards;
+  }
+
+  .loader-logo {
+    animation: zoomIn 1s ease-in-out forwards;
+  }
+
+  /* Button styles */
+  .btn-primary {
+    @apply bg-red-600 text-white px-6 py-3 rounded-md font-medium hover:bg-red-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-red-600 border border-red-600 px-6 py-3 rounded-md font-medium hover:bg-red-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2;
+  }
+  
+  .btn-outline {
+    @apply border-2 border-white text-white px-6 py-3 rounded-md font-medium hover:bg-white hover:text-gray-900 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  }
+
+  /* Product card styles */
+  .product-card {
+    @apply card card-hover relative;
+  }
+  
+  .product-card-image {
+    @apply w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105;
+  }
+  
+  .product-card-content {
+    @apply p-4;
+  }
+  
+  .product-badge {
+    @apply absolute top-2 left-2 px-2 py-1 text-xs font-semibold rounded;
+  }
+  
+  .badge-sold {
+    @apply bg-gray-800 text-white;
+  }
+  
+  .badge-new {
+    @apply bg-red-600 text-white;
+  }
+  
+  .badge-sale {
+    @apply bg-red-600 text-white;
+  }
+
+  /* Text styles */
+  .text-heading {
+    @apply text-gray-900 font-semibold;
+  }
+  
+  .text-subheading {
+    @apply text-gray-600 text-sm uppercase tracking-wide;
+  }
+  
+  .text-price {
+    @apply text-lg font-semibold text-gray-900;
+  }
+  
+  .text-price-old {
+    @apply text-sm text-gray-500 line-through;
+  }
+
+  /* Section styles */
+  .section-padding {
+    @apply py-16 lg:py-24;
+  }
+  
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Hero section */
+  .hero-gradient {
+    background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 100%);
+  }
+
+  /* Carousel dots */
+  .carousel-dots {
+    @apply flex justify-center space-x-2 mt-8;
+  }
+  
+  .carousel-dot {
+    @apply w-3 h-3 rounded-full bg-white bg-opacity-50 cursor-pointer transition-all duration-200;
+  }
+  
+  .carousel-dot.active {
+    @apply bg-white;
+  }
+
+  /* Category filter buttons */
+  .category-filter {
+    @apply px-6 py-3 rounded-md font-medium transition-colors duration-200 cursor-pointer;
+  }
+  
+  .category-filter.active {
+    @apply bg-gray-900 text-white;
+  }
+  
+  .category-filter:not(.active) {
+    @apply bg-white text-gray-700 hover:bg-gray-50;
+  }
+
+  /* Form styles */
+  .form-input {
+    @apply w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent;
+  }
+  
+  .form-textarea {
+   @apply w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-y;
+
+  }
+  
+  .form-select {
+    @apply w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white;
+  }
+
+  /* Loading animations */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out;
+  }
+
+  /* Book Rack Styles */
+  .book-shelf {
+    @apply relative pt-4;
+  }
+
+  .shelf-wood {
+    @apply h-4 bg-yellow-800 rounded-md shadow-lg border-b-4 border-yellow-900;
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><g fill-opacity="0.1" fill="%23000"><rect x="0" y="0" width="100" height="1" /><rect x="0" y="5" width="100" height="1" /><rect x="0" y="10" width="100" height="2" /><rect x="0" y="20" width="100" height="1" /><rect x="0" y="35" width="100" height="3" /><rect x="0" y="55" width="100" height="2" /><rect x="0" y="70" width="100" height="1" /><rect x="0" y="90" width="100" height="2" /></g></svg>');
+  }
+
+  .book-on-shelf {
+    @apply w-1/6 max-w-[200px] transition-transform duration-300 hover:-translate-y-4 hover:z-10;
+  }
+
+  .book-on-shelf .product-card {
+    @apply shadow-xl;
+  }
+}
+
+@keyframes pulseZoomIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Utility classes */
+@layer utilities {
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  }
+  
+  .bg-overlay {
+    background: rgba(0,0,0,0.5);
+  }
+  
+  .backdrop-blur-xs {
+    backdrop-filter: blur(2px);
+  }
+}
+
+/* Responsive typography */
+@media (max-width: 640px) {
+  .responsive-text-4xl {
+    @apply text-2xl;
+  }
+  
+  .responsive-text-3xl {
+    @apply text-xl;
+  }
+  
+  .responsive-text-2xl {
+    @apply text-lg;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
