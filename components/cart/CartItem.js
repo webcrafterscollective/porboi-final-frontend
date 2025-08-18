@@ -60,7 +60,7 @@ const CartItem = ({ item, onUpdate }) => {
                 {item.name}
               </h3>
             </Link>
-            <p className="text-gray-600 mt-1">${parseFloat(item.price).toFixed(2)} each</p>
+            <p className="text-gray-600 mt-1">₹{parseFloat(item.price).toFixed(2)} each</p>
           </div>
 
           {/* Quantity Controls */}
@@ -88,7 +88,7 @@ const CartItem = ({ item, onUpdate }) => {
 
             {/* Item Total */}
             <div className="text-lg font-semibold text-gray-900 min-w-[4rem] text-right">
-              ${itemTotal}
+              ₹{itemTotal}
             </div>
 
             {/* Remove Button */}

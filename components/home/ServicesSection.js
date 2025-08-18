@@ -6,11 +6,11 @@ const ServicesSection = () => {
   return (
     <section className="relative section-padding bg-cover bg-center" 
              style={{
-               backgroundImage: 'url(https://i.pinimg.com/1200x/d9/37/61/d93761b42370edc9680e51e567e287eb.jpg)',
+               backgroundImage: "url('self-publish-bg.png')",
                backgroundColor: '#111827' // Fallback color
              }}>
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-gray-900 bg-opacity-75"></div>
+      {/* UPDATED: Consistent gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-900/90 via-gray-900/70 to-black/60"></div>
       
       {/* Content */}
       <div className="relative z-10 container text-center text-white">

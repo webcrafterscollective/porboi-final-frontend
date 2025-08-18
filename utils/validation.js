@@ -5,7 +5,8 @@ export const validateEmail = (email) => {
 };
 
 export const validatePhone = (phone) => {
-  const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+  // This regex is a bit more flexible for Indian phone numbers
+  const phoneRegex = /^(?:\+91|0)?[6789]\d{9}$/;
   return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
 };
 
@@ -37,6 +38,7 @@ export const validateZipCode = (zipCode, country = 'US') => {
     US: /^\d{5}(-\d{4})?$/,
     CA: /^[A-Za-z]\d[A-Za-z] ?\d[A-Za-z]\d$/,
     GB: /^[A-Za-z]{1,2}\d[A-Za-z\d]? ?\d[A-Za-z]{2}$/,
+    IN: /^\d{6}$/, // Added pattern for Indian PIN codes
   };
   
   return patterns[country]?.test(zipCode) || false;

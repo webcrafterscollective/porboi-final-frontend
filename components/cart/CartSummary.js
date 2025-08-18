@@ -4,9 +4,7 @@ import Link from 'next/link';
 
 const CartSummary = ({ cart, onCheckout }) => {
   const subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
-  const shipping = subtotal > 50 ? 0 : 10; // Free shipping over $50
-  const tax = subtotal * 0.08; // 8% tax
-  const total = subtotal + shipping + tax;
+  const total = subtotal; // Total is now the same as subtotal on this page
 
   return (
     <div className="bg-gray-50 rounded-lg p-6 h-fit">
@@ -15,41 +13,23 @@ const CartSummary = ({ cart, onCheckout }) => {
       <div className="space-y-3 mb-6">
         <div className="flex justify-between text-gray-600">
           <span>Subtotal ({cart.length} item{cart.length !== 1 ? 's' : ''})</span>
-          <span>${subtotal.toFixed(2)}</span>
-        </div>
-        
-        <div className="flex justify-between text-gray-600">
-          <span>Shipping</span>
-          <span>
-            {shipping === 0 ? (
-              <span className="text-green-600 font-medium">FREE</span>
-            ) : (
-              `$${shipping.toFixed(2)}`
-            )}
-          </span>
-        </div>
-        
-        <div className="flex justify-between text-gray-600">
-          <span>Tax</span>
-          <span>${tax.toFixed(2)}</span>
+          <span>₹{subtotal.toFixed(2)}</span>
         </div>
         
         <div className="border-t border-gray-200 pt-3">
           <div className="flex justify-between text-lg font-semibold text-gray-900">
             <span>Total</span>
-            <span>${total.toFixed(2)}</span>
+            <span>₹{total.toFixed(2)}</span>
           </div>
         </div>
       </div>
 
       {/* Shipping Notice */}
-      {subtotal < 50 && (
-        <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4">
-          <p className="text-sm text-blue-800">
-            Add <span className="font-semibold">${(50 - subtotal).toFixed(2)}</span> more for free shipping!
-          </p>
-        </div>
-      )}
+      <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4">
+        <p className="text-sm text-blue-800">
+          Shipping costs will be calculated on the checkout page.
+        </p>
+      </div>
 
       {/* Checkout Button */}
       <Link href="/checkout">

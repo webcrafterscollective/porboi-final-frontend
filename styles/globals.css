@@ -26,15 +26,46 @@
 /* Custom component styles */
 @layer components {
 
-/* Website Loader Styles */
+  /* --- WEBSITE LOADER STYLES --- */
   .loader-container {
-    @apply fixed inset-0 bg-white z-[100] flex items-center justify-center;
-    animation: fadeOut 0.5s ease-in-out 1.5s forwards;
+    @apply fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center transition-opacity duration-500; /* UPDATED */
+  }
+
+  .loader-book {
+    @apply relative w-48 h-64;
+  }
+
+  .book-cover {
+    @apply absolute top-0 w-1/2 h-full bg-gray-100 origin-right transition-transform duration-1000 ease-in-out; /* Changed cover to light gray for contrast */
+    backface-visibility: hidden;
+    border: 1px solid #e5e7eb;
+  }
+
+  .book-cover-left {
+    @apply left-0 origin-right;
+    animation: openLeft 1.5s ease-in-out forwards;
+  }
+
+  .book-cover-right {
+    @apply right-0 origin-left;
+    animation: openRight 1.5s ease-in-out forwards;
+  }
+
+  .loader-logo-container {
+    @apply absolute inset-0 flex items-center justify-center opacity-0;
+    animation: fadeInLogo 1s ease-in-out 0.5s forwards;
   }
 
   .loader-logo {
-    animation: zoomIn 1s ease-in-out forwards;
+    @apply h-40 w-auto; /* UPDATED */
+    animation: pulseLogo 2s infinite ease-in-out;
   }
+
+  .loader-text {
+    @apply mt-8 text-gray-800 font-serif tracking-widest text-sm opacity-0; /* UPDATED */
+    animation: fadeInText 1s ease-in-out 1s forwards;
+  }
+  /* --- END OF LOADER STYLES --- */
 
   /* Button styles */
   .btn-primary {
@@ -64,7 +95,7 @@
   }
   
   .product-card-image {
-    @apply w-full h-full object-contain transition-transform duration-300 group-hover:scale-105; /* UPDATED */
+    @apply w-full h-full object-contain transition-transform duration-300 group-hover:scale-105;
   }
   
   .product-card-content {
@@ -186,20 +217,32 @@
   }
 }
 
-@keyframes pulseZoomIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.7);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+/* --- LOADER KEYFRAMES --- */
+@keyframes openLeft {
+  0% { transform: perspective(1000px) rotateY(0deg); }
+  100% { transform: perspective(1000px) rotateY(-180deg); }
 }
+
+@keyframes openRight {
+  0% { transform: perspective(1000px) rotateY(0deg); }
+  100% { transform: perspective(1000px) rotateY(180deg); }
+}
+
+@keyframes fadeInLogo {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulseLogo {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes fadeInText {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+/* --- END OF LOADER KEYFRAMES --- */
 
 /* Custom animations */
 @keyframes fadeIn {

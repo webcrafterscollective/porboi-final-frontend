@@ -32,7 +32,16 @@ const ProductCard = ({ product }) => {
     ? Math.round(((regular_price - sale_price) / regular_price) * 100)
     : 0;
 
-  const author = short_description || categories[0]?.name || 'Unknown Author';
+  // Function to strip HTML tags for clean display
+  const stripHtml = (html) => {
+    if (typeof window === 'undefined' || !html) {
+      return html ? String(html).replace(/<[^>]*>?/gm, '') : '';
+    }
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || "";
+  };
+
+  const author = stripHtml(short_description) || categories[0]?.name || 'Unknown Author';
 
   // Handle add to cart
   const handleAddToCart = async (e) => {
@@ -42,10 +51,10 @@ const ProductCard = ({ product }) => {
     try {
       // Add to local cart
       cartUtils.addToCart(product, 1);
-      
+
       // Dispatch custom event to update cart count in header
       window.dispatchEvent(new CustomEvent('cartUpdated'));
-      
+
       toast.success(`${name} added to cart!`);
     } catch (error) {
       console.error('Error adding to cart:', error);
@@ -70,7 +79,7 @@ const ProductCard = ({ product }) => {
       {/* Product Image */}
       <div className="relative overflow-hidden">
         <Link href={productUrl}>
-          <div className="relative aspect-square bg-gray-100"> {/* UPDATED */}
+          <div className="relative aspect-square bg-gray-100">
             <img
               src={primaryImage}
               alt={name}
@@ -89,9 +98,6 @@ const ProductCard = ({ product }) => {
           {stock_status === 'outofstock' && (
             <span className="product-badge badge-sold">SOLD</span>
           )}
-          {stock_status === 'instock' && categories.some(cat => cat.name === 'New') && (
-            <span className="product-badge badge-new">NEW</span>
-          )}
           {on_sale && (
             <span className="product-badge badge-sale">
               SALE {discountPercentage > 0 ? `-${discountPercentage}%` : ''}
@@ -103,15 +109,14 @@ const ProductCard = ({ product }) => {
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 space-y-2">
           <button
             onClick={handleWishlistToggle}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200 ${
-              isWishlisted
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200 ${isWishlisted
                 ? 'bg-red-600 text-white'
                 : 'bg-white text-gray-600 hover:bg-red-600 hover:text-white'
-            }`}
+              }`}
           >
             <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-current' : ''}`} />
           </button>
-          
+
           <Link href={productUrl}>
             <button className="w-10 h-10 bg-white text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-900 hover:text-white transition-colors duration-200">
               <Eye className="w-4 h-4" />
@@ -142,33 +147,36 @@ const ProductCard = ({ product }) => {
       </div>
 
       {/* Product Info */}
-      <div className="product-card-content flex-grow flex flex-col">
-        <div className="flex-grow">
-            {/* Author */}
-            <div
-              className="text-sm text-gray-500 uppercase tracking-wide mb-1"
-              dangerouslySetInnerHTML={{ __html: author }}
-            />
-
-            {/* Product Name */}
-            <Link href={productUrl}>
-            <h3 className="text-lg font-serif text-heading mb-2 hover:text-red-600 transition-colors duration-200 line-clamp-2">
-                {name}
+      <div className="product-card-content flex-grow flex flex-col justify-between">
+        <div>
+          {/* Product Name */}
+          <Link href={productUrl}>
+            <h3 className="text-lg font-serif text-heading mb-1 hover:text-red-600 transition-colors duration-200 line-clamp-2">
+              {name}
             </h3>
-            </Link>
+          </Link>
+
+          {/* Author */}
+          <p className="text-sm text-gray-500 mb-4">
+            {author}
+          </p>
         </div>
 
-        {/* Price */}
-        <div className="flex items-center space-x-2 mt-2">
-          {on_sale ? (
-            <>
-              <span className="text-price text-red-600">₹{sale_price}</span>
-              <span className="text-price-old">₹{regular_price}</span>
-            </>
-          ) : (
-            <span className="text-price">₹{price}</span>
-          )}
+        {/* Price Box */}
+        {/* Price Box */}
+        <div className="mt-auto">
+          <div className="bg-blue-50 inline-block px-4 py-2 rounded-lg">
+            {on_sale ? (
+              <div className="flex items-baseline space-x-2">
+                <span className="text-xl font-bold text-blue-600">₹{sale_price}</span>
+                <span className="text-sm text-gray-500 line-through">₹{regular_price}</span>
+              </div>
+            ) : (
+              <span className="text-xl font-bold text-blue-600">₹{price}</span>
+            )}
+          </div>
         </div>
+
       </div>
     </div>
   );
