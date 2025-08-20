@@ -2,63 +2,139 @@
 import React from 'react';
 import Head from 'next/head';
 import ProductGrid from '../../components/shop/ProductGrid';
-import { api } from '../../lib/api';
+import { api, wooCommerceApi } from '../../lib/api';
 import { Book } from 'lucide-react';
 
-const ShopPage = ({ products, categories }) => {
+const ShopPage = ({ products, categories, totalPages, currentPage, categoryFromSlug, totalProducts }) => {
+  // Function to safely render HTML content from titles
+  const renderHTML = (htmlString) => ({ __html: htmlString });
+
+  const pageTitle = categoryFromSlug ? categoryFromSlug.name : "All Products - porboi.in";
+  const pageDescription = categoryFromSlug 
+    ? `Browse all books in the ${categoryFromSlug.name} category.` 
+    : "Explore our complete collection of books and accessories.";
+
   return (
     <>
       <Head>
-        <title>বইসমূহ - porboi.in</title>
-        <meta name="description" content="আমাদের বাছাই করা বাংলা ও বিশ্বসাহিত্যের সংগ্রহ ঘুরে দেখুন। আপনার পরবর্তী প্রিয় বইটি খুঁজে নিন porboi.in এ।" />
-        <meta name="keywords" content="বাংলা বই কিনুন, কলকাতা বইয়ের দোকান, অনলাইন বইয়ের দোকান, বাংলা সাহিত্য" />
+        <title dangerouslySetInnerHTML={renderHTML(pageTitle)} />
+        <meta name="description" content={pageDescription} />
+        <meta name="keywords" content="bengali books, online bookstore, kolkata bookstore, indian literature" />
       </Head>
 
-      {/* Page Header */}
       <div className="bg-gray-50 border-b border-gray-200 py-24">
         <div className="container text-center">
           <div className="inline-block bg-red-100 text-red-600 p-4 rounded-full mb-4">
             <Book className="w-8 h-8" />
           </div>
-          <h1 className="text-4xl lg:text-5xl font-serif text-gray-900 mb-4">পড়বই-এর গ্রন্থভান্ডার</h1>
+          <h1 
+            className="text-4xl lg:text-5xl font-serif text-gray-900 mb-4"
+            dangerouslySetInnerHTML={renderHTML(categoryFromSlug ? categoryFromSlug.name : 'All Products')}
+          />
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            সময়ের পরীক্ষায় উত্তীর্ণ শ্রেষ্ঠ সাহিত্য ও সমকালীন রত্নসমূহ আবিষ্কার করুন আমাদের বাছাই করা সংগ্রহে।
+            Showing {products.length} of {totalProducts} products.
           </p>
         </div>
       </div>
 
-      {/* Products Grid with Filters */}
       <ProductGrid
-        initialProducts={products}
-        initialCategories={categories}
+        key={categoryFromSlug ? categoryFromSlug.id : 'all-products'}
+        products={products}
+        categories={categories}
+        totalPages={totalPages}
+        currentPage={currentPage}
+        totalProducts={totalProducts}
       />
     </>
   );
 };
 
-export async function getStaticProps() {
+export async function getServerSideProps(context) {
+  const { query } = context;
+  const {
+    category_slug,
+    page = 1,
+    sortBy,
+    priceRange,
+    inStock,
+    onSale,
+  } = query;
+  
+  let categoryFromSlug = null;
+  let categoriesForFilter = [];
+  const productsPerPage = 12;
+
   try {
-    // Fetch initial products and categories
-    const [products, categories] = await Promise.all([
-      api.getProducts({ per_page: 20 }),
-      api.getCategories()
-    ]);
+    const allCategories = await api.getCategories({ per_page: 100, orderby: 'name', order: 'asc' }) || [];
+
+    const productParams = {
+      per_page: productsPerPage,
+      page: parseInt(page, 10),
+    };
+
+    // Handle all filters by adding them to the API request params
+    if (category_slug) {
+      categoryFromSlug = allCategories.find(c => c.slug === category_slug) || null;
+      if (categoryFromSlug) {
+        productParams.category = categoryFromSlug.id;
+        const subCategories = allCategories.filter(c => c.parent === categoryFromSlug.id && c.count > 0);
+        categoriesForFilter = [categoryFromSlug, ...subCategories];
+      }
+    } else {
+      categoriesForFilter = allCategories.filter(c => c.parent === 0 && c.count > 0);
+    }
+    
+    if (onSale === 'true') productParams.on_sale = true;
+    if (inStock === 'true') productParams.stock_status = 'instock';
+    if (priceRange) {
+      const [min, max] = priceRange.split('-');
+      productParams.min_price = min;
+      productParams.max_price = max;
+    }
+    
+    if (sortBy) {
+        switch (sortBy) {
+            case 'price-asc':
+              productParams.orderby = 'price';
+              productParams.order = 'asc';
+              break;
+            case 'price-desc':
+              productParams.orderby = 'price';
+              productParams.order = 'desc';
+              break;
+            case 'name-asc':
+              productParams.orderby = 'title';
+              productParams.order = 'asc';
+              break;
+            case 'popularity':
+              productParams.orderby = 'popularity';
+              productParams.order = 'desc';
+              break;
+            default:
+              productParams.orderby = 'date';
+              productParams.order = 'desc';
+        }
+    }
+
+    const response = await wooCommerceApi.get('/products', { params: productParams });
+    const products = response.data;
+    const totalProducts = parseInt(response.headers['x-wp-total'], 10);
+    const totalPages = parseInt(response.headers['x-wp-totalpages'], 10);
 
     return {
       props: {
-        products: products || [],
-        categories: categories || [],
+        products,
+        categories: categoriesForFilter,
+        totalPages,
+        currentPage: parseInt(page, 10),
+        totalProducts,
+        categoryFromSlug,
       },
-      revalidate: 3600, // Revalidate every hour
     };
   } catch (error) {
-    console.error('Error fetching shop data:', error);
+    console.error('Error fetching shop data:', error.message);
     return {
-      props: {
-        products: [],
-        categories: [],
-      },
-      revalidate: 300,
+      props: { products: [], categories: [], totalPages: 1, currentPage: 1, totalProducts: 0, categoryFromSlug: null },
     };
   }
 }
