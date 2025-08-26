@@ -28,10 +28,10 @@ const Footer = () => {
   ];
 
   const featuredImages = [
-    { src: "https://images.pexels.com/photos/2041540/pexels-photo-2041540.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", alt: "Cozy reading nook with a lamp" },
-    { src: "https://images.pexels.com/photos/1181498/pexels-photo-1181498.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", alt: "Person reading a book in a stylish setting" },
-    { src: "https://images.pexels.com/photos/433308/pexels-photo-433308.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", alt: "Vintage typewriter with a book" },
-    { src: "https://images.pexels.com/photos/2041540/pexels-photo-2041540.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", alt: "Artistic display of books" },
+    { src: "https://images.pexels.com/photos/256453/pexels-photo-256453.jpeg", alt: "Cozy reading nook with a lamp" },
+    { src: "https://images.pexels.com/photos/4865543/pexels-photo-4865543.jpeg", alt: "Person reading a book in a stylish setting" },
+    { src: "https://images.pexels.com/photos/3747474/pexels-photo-3747474.jpeg", alt: "Vintage typewriter with a book" },
+    { src: "https://images.pexels.com/photos/4865741/pexels-photo-4865741.jpeg", alt: "Artistic display of books" },
   ];
 
   return (

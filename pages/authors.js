@@ -3,53 +3,9 @@ import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { BookOpen } from 'lucide-react';
+import { api } from '../lib/api';
 
-const AuthorsPage = () => {
-  const authors = [
-    {
-      id: 1,
-      name: "Aanya Sharma",
-      role: "Historical Fiction Novelist",
-      image: "https://images.pexels.com/photos/3772510/pexels-photo-3772510.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      description: "Aanya's award-winning novels masterfully blend historical detail with gripping suspense, captivating readers worldwide."
-    },
-    {
-      id: 2,
-      name: "Rohan Mehra",
-      role: "Contemporary Poet", 
-      image: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      description: "Rohan is celebrated for his evocative poetry that explores the nuances of modern life and relationships in urban India."
-    },
-    {
-      id: 3,
-      name: "Priya Das",
-      role: "Children's Book Author",
-      image: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", 
-      description: "Priya brings enchanting stories to life for young readers, filled with imagination, wonder, and valuable life lessons."
-    },
-    {
-      id: 4,
-      name: "Vikram Singh",
-      role: "Non-Fiction Chronicler",
-      image: "https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      description: "Vikram's meticulously researched non-fiction makes complex historical and cultural subjects accessible and engaging."
-    },
-    {
-      id: 5,
-      name: "Isha Reddy",
-      role: "Fantasy World-Builder",
-      image: "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      description: "Isha is renowned for creating epic fantasy worlds with intricate magic systems and unforgettable characters."
-    },
-    {
-      id: 6,
-      name: "Arjun Kumar",
-      role: "Master of Mystery",
-      image: "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      description: "Arjun keeps readers on the edge of their seats with his cleverly plotted mysteries and shocking twists."
-    },
-  ];
-
+const AuthorsPage = ({ authors = [] }) => {
   return (
     <>
       <Head>
@@ -59,7 +15,7 @@ const AuthorsPage = () => {
 
       <div className="bg-white">
         {/* Page Header */}
-        <div className="relative bg-gray-900 text-white py-20" style={{ backgroundImage: "url('https://images.pexels.com/photos/301920/pexels-photo-301920.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="relative bg-gray-900 text-white py-20" style={{ backgroundImage: "url('https://images.pexels.com/photos/256453/pexels-photo-256453.jpeg')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
           <div className="absolute inset-0 bg-black bg-opacity-60"></div>
           <div className="relative container text-center z-10">
             <h1 className="text-4xl lg:text-5xl font-serif mb-4">The Minds Behind the Stories</h1>
@@ -87,12 +43,8 @@ const AuthorsPage = () => {
                   <p className="text-sm text-gray-500 uppercase tracking-wide">
                     {author.role}
                   </p>
-                  <h3 className="text-2xl font-serif text-heading">
-                    {author.name}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    {author.description}
-                  </p>
+                  <h3 className="text-2xl font-serif text-heading" dangerouslySetInnerHTML={{ __html: author.name }} />
+                  <p className="text-gray-600 leading-relaxed" dangerouslySetInnerHTML={{ __html: author.description }} />
                 </div>
               </div>
             ))}
@@ -118,5 +70,67 @@ const AuthorsPage = () => {
     </>
   );
 };
+
+export async function getStaticProps() {
+  try {
+    const bookCategory = await api.getCategoryBySlug('book');
+    let products = [];
+
+    if (bookCategory) {
+      products = await api.getProducts({ 
+        category: bookCategory.id, 
+        per_page: 100 
+      });
+    }
+
+    const authorsMap = new Map();
+
+    products.forEach(product => {
+      let authorName = null;
+      
+      // Prioritize the "Book Author" attribute
+      if (product.attributes && Array.isArray(product.attributes)) {
+        const authorAttribute = product.attributes.find(attr => attr.name === 'Book Author');
+        if (authorAttribute && authorAttribute.options.length > 0) {
+          authorName = authorAttribute.options[0].trim();
+        }
+      }
+
+      // Fallback to short description if attribute is not found
+      if (!authorName) {
+        const authorNameMatch = product.short_description.match(/<p>(.*?)<\/p>/);
+        if (authorNameMatch) {
+          authorName = authorNameMatch[1].trim();
+        }
+      }
+
+      if (authorName && authorName !== 'Unknown Author' && !authorsMap.has(authorName)) {
+        authorsMap.set(authorName, {
+          id: product.id,
+          name: authorName,
+          role: "Author",
+          image: "https://images.pexels.com/photos/753695/pexels-photo-753695.jpeg", // product.images[0]?.src || 
+          description: `Author of "${product.name}"`
+        });
+      }
+    });
+
+    const authors = Array.from(authorsMap.values());
+
+    return {
+      props: {
+        authors,
+      },
+      revalidate: 3600,
+    };
+  } catch (error) {
+    console.error("Failed to fetch authors:", error);
+    return {
+      props: {
+        authors: [],
+      },
+    };
+  }
+}
 
 export default AuthorsPage;

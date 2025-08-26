@@ -1,9 +1,10 @@
 // pages/shop/index.js
 import React from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import ProductGrid from '../../components/shop/ProductGrid';
 import { api, wooCommerceApi } from '../../lib/api';
-import { Book } from 'lucide-react';
+import { Book, ChevronRight } from 'lucide-react';
 
 const ShopPage = ({ products, categories, totalPages, currentPage, categoryFromSlug, totalProducts }) => {
   // Function to safely render HTML content from titles
@@ -14,6 +15,9 @@ const ShopPage = ({ products, categories, totalPages, currentPage, categoryFromS
     ? `Browse all books in the ${categoryFromSlug.name} category.` 
     : "Explore our complete collection of books and accessories.";
 
+  // Use the category image for the header, with a fallback
+  const headerImage = categoryFromSlug?.image?.src || 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
+
   return (
     <>
       <Head>
@@ -22,21 +26,29 @@ const ShopPage = ({ products, categories, totalPages, currentPage, categoryFromS
         <meta name="keywords" content="bengali books, online bookstore, kolkata bookstore, indian literature" />
       </Head>
 
-      <div className="bg-gray-50 border-b border-gray-200 py-24">
-        <div className="container text-center">
-          <div className="inline-block bg-red-100 text-red-600 p-4 rounded-full mb-4">
-            <Book className="w-8 h-8" />
-          </div>
+      {/* New Header Section */}
+      <div className="relative bg-gray-800 text-white py-24" style={{ backgroundImage: `url(${headerImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+        <div className="relative container text-center z-10">
           <h1 
-            className="text-4xl lg:text-5xl font-serif text-gray-900 mb-4"
-            dangerouslySetInnerHTML={renderHTML(categoryFromSlug ? categoryFromSlug.name : 'All Products')}
+            className="text-4xl lg:text-5xl font-serif mb-4"
+            dangerouslySetInnerHTML={renderHTML(categoryFromSlug ? categoryFromSlug.name : 'Our Collection')}
           />
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Showing {products.length} of {totalProducts} products.
-          </p>
+          <nav className="flex justify-center items-center text-sm text-gray-300">
+            <Link href="/" className="hover:text-white">Home</Link>
+            <ChevronRight className="w-4 h-4 mx-1" />
+            <Link href="/shop" className="hover:text-white">Shop</Link>
+            {categoryFromSlug && (
+              <>
+                <ChevronRight className="w-4 h-4 mx-1" />
+                <span className="text-white" dangerouslySetInnerHTML={renderHTML(categoryFromSlug.name)} />
+              </>
+            )}
+          </nav>
         </div>
       </div>
 
+      {/* Product Grid Section */}
       <ProductGrid
         key={categoryFromSlug ? categoryFromSlug.id : 'all-products'}
         products={products}

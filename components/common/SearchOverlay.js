@@ -53,7 +53,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search for books, authors, or categories..."
+              placeholder="For books, authors..."
               className="w-full bg-transparent border-none text-2xl font-serif text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-0"
               autoFocus
             />

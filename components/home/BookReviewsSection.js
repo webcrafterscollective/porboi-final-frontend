@@ -3,19 +3,20 @@ import React from 'react';
 import { getAllReviews } from '../../lib/reviews';
 
 const BookReviewsSection = () => {
-  const reviews = getAllReviews();
+  // Get all reviews and then select only the first one
+  const reviews = getAllReviews().slice(0, 1);
 
   return (
     <section className="section-padding bg-white">
       <div className="container">
-        {/* Section Header */}
+          {/* Section Header */}
         <div className="text-center mb-16">
-          <p className="text-subheading mb-4">সমালোচকের চোখে</p>
+          <p className="text-subheading mb-4">From Our Readers</p>
           <h2 className="text-3xl lg:text-4xl font-serif text-heading mb-6">
-            বইয়ের পর্যালোচনা
+            Book Reviews
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            আমাদের পাঠকদের কাছ থেকে সরাসরি বইয়ের কিছু নির্বাচিত পর্যালোচনা।
+            
           </p>
         </div>
 

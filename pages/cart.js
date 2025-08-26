@@ -52,7 +52,7 @@ const CartPage = () => {
       </Head>
 
       <div className="bg-gray-50 min-h-screen">
-        <div className="container section-padding">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Page Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-serif text-gray-900 mb-2">Shopping Cart</h1>
@@ -83,9 +83,9 @@ const CartPage = () => {
             </div>
           ) : (
             /* Cart with Items */
-            <div className="grid lg:grid-cols-3 gap-8">
+            <div className="flex flex-col lg:flex-row gap-8">
               {/* Cart Items */}
-              <div className="lg:col-span-2 bg-white rounded-lg p-6">
+              <div className="w-full lg:w-2/3 bg-white rounded-lg p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-semibold text-gray-900">
                     Cart Items ({cart.length})
@@ -110,7 +110,7 @@ const CartPage = () => {
               </div>
 
               {/* Cart Summary */}
-              <div className="lg:col-span-1">
+              <div className="w-full lg:w-1/3">
                 <CartSummary cart={cart} />
               </div>
             </div>

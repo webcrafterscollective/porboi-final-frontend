@@ -3,19 +3,9 @@ import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { Briefcase } from 'lucide-react';
+import { api } from '../lib/api';
 
-const PublishersPage = () => {
-  const publishers = [
-    { name: 'Penguin Random House India', image: 'https://images.pexels.com/photos/357514/pexels-photo-357514.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
-    { name: 'HarperCollins India', image: 'https://images.pexels.com/photos/415071/pexels-photo-415071.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
-    { name: 'Rupa Publications', image: 'https://images.pexels.com/photos/207692/pexels-photo-207692.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
-    { name: 'Hachette India', image: 'https://images.pexels.com/photos/2228580/pexels-photo-2228580.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
-    { name: 'Pan Macmillan India', image: 'https://images.pexels.com/photos/261579/pexels-photo-261579.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
-    { name: 'Scholastic India', image: 'https://images.pexels.com/photos/62693/pexels-photo-62693.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
-    { name: 'Westland Publications', image: 'https://images.pexels.com/photos/256455/pexels-photo-256455.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
-    { name: 'Jaico Publishing House', image: 'https://images.pexels.com/photos/1261180/pexels-photo-1261180.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
-  ];
-
+const PublishersPage = ({ publishers = [] }) => {
   return (
     <>
       <Head>
@@ -75,5 +65,48 @@ const PublishersPage = () => {
     </>
   );
 };
+
+export async function getStaticProps() {
+  try {
+    // Fetch all products, not just from the book category, to get all publishers
+    const products = await api.getProducts({ 
+      per_page: 100 
+    });
+
+    const publishersMap = new Map();
+
+    products.forEach(product => {
+      // Ensure product.attributes exists and is an array before processing
+      if (product.attributes && Array.isArray(product.attributes)) {
+        const publisherAttribute = product.attributes.find(attr => attr.name === 'Publisher');
+        if (publisherAttribute && publisherAttribute.options.length > 0) {
+          const publisherName = publisherAttribute.options[0];
+          if (publisherName && !publishersMap.has(publisherName)) {
+            publishersMap.set(publisherName, {
+              name: publisherName,
+              image: 'https://images.pexels.com/photos/357514/pexels-photo-357514.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' // Using a consistent fallback image
+            });
+          }
+        }
+      }
+    });
+
+    const publishers = Array.from(publishersMap.values());
+
+    return {
+      props: {
+        publishers,
+      },
+      revalidate: 3600, // Re-generate the page every hour
+    };
+  } catch (error) {
+    console.error("Failed to fetch publishers:", error);
+    return {
+      props: {
+        publishers: [], // Return an empty array on error
+      },
+    };
+  }
+}
 
 export default PublishersPage;

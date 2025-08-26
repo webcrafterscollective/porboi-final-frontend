@@ -35,7 +35,7 @@ const HeroSection = ({ featuredBooks = [] }) => {
   const goToSlide = (index) => setCurrentSlide(index);
 
   return (
-    <section className="relative aspect-video w-full bg-gray-900 overflow-hidden">
+    <section className="relative w-full bg-gray-900 overflow-hidden aspect-video lg:aspect-[4/1]">
       {/* Slides */}
       {slides.map((slide, index) => (
         <Link href={slide.link} key={slide.id}>
@@ -46,7 +46,7 @@ const HeroSection = ({ featuredBooks = [] }) => {
             <img
               src={slide.image}
               alt=""
-              className="w-full h-full object-contain" // Full image visible
+              className="w-full h-full object-fill" // Stretches image to fill the container
             />
             <div className="absolute inset-0 bg-black bg-opacity-10"></div>
           </div>

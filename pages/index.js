@@ -28,8 +28,11 @@ export default function Home({newBooks, featuredProducts, handmadeProducts, cate
 
       <div className="homepage">
         {/* Hero Section with Carousel */}
-        <HeroSection featuredBooks={featuredProducts} />
+        <HeroSection />
 
+         {/* Featured Products Grid */}
+        <HorizontalProductScroller title="Featured" products={featuredProducts} />
+        
         {/* Featured Books Grid with Category Filter */}
         <BookGrid />
 
@@ -39,16 +42,14 @@ export default function Home({newBooks, featuredProducts, handmadeProducts, cate
          {/* New Books Section with Horizontal Scroll */}
         <HorizontalProductScroller title="New Books" products={newBooks} />
         
-        {/* Featured Products Grid */}
-        <ProductGridSection title="Featured Products" products={featuredProducts} />
+       
 
         {/* Handmade Products Grid */}
         <ProductGridSection title="Handmade Corner" products={handmadeProducts} link="/shop?category_slug=fashion" />
 
    
 
-        {/* Gallery Grid */}
-        <GallerySection />
+      
 
         {/* Book Reviews Section */}
         <BookReviewsSection />
@@ -65,6 +66,8 @@ export async function getStaticProps() {
       featured: true, 
       per_page: 8
     });
+
+    console.log(featuredProducts);
 
     // Fetch categories for navigation
     const categories = await api.getCategories();

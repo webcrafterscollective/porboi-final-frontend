@@ -33,6 +33,7 @@ const Header = () => {
   const navigation = [
     { name: 'Books', href: '/shop?category_slug=book', hasDropdown: false },
     { name: 'Text Books', href: '/shop?category_slug=text-books', hasDropdown: false },
+     { name: 'Old Books', href: '/shop?category_slug=old-books', hasDropdown: false },
     { name: 'Authors', href: '/authors', hasDropdown: false },
     { name: 'Publishers', href: '/publishers', hasDropdown: false },
     { name: 'Self Publication', href: '/self-publication', hasDropdown: false },
