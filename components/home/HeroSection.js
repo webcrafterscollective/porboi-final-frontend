@@ -6,11 +6,11 @@ import Link from 'next/link';
 const HeroSection = ({ featuredBooks = [] }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Local fallback slides
+  // Local fallback slides with separate mobile and desktop images
   const heroSlides = [
-    { id: 1, image: "/banners/banner1.png", link: "/shop?category=bengali-classics" },
-    { id: 2, image: "/banners/banner2.png", link: "/shop?category=modern-bengali-literature" },
-    { id: 3, image: "/banners/banner3.png", link: "/shop?category=book-fair-collection" }
+    { id: 1, image: "/banners/banner1.png", image_mob: "/banners/banner1_mob.png", link: "/shop?category=bengali-classics" },
+    { id: 2, image: "/banners/banner2.png", image_mob: "/banners/banner2_mob.png", link: "/shop?category=modern-bengali-literature" },
+    { id: 3, image: "/banners/banner3.png", image_mob: "/banners/banner3_mob.png", link: "/shop?category=book-fair-collection" }
   ];
 
   // If featuredBooks exist, use them; else fallback to heroSlides
@@ -18,6 +18,7 @@ const HeroSection = ({ featuredBooks = [] }) => {
     ? featuredBooks.map(book => ({
         id: book.id,
         image: book.images[0]?.src || 'https://placehold.co/1920x1080?text=Porboi',
+        image_mob: book.images[0]?.src || 'https://placehold.co/1920x1080?text=Porboi', // Assuming the same image for mobile as a fallback
         link: `/shop/${book.slug || book.id}`
       }))
     : heroSlides;
@@ -35,7 +36,7 @@ const HeroSection = ({ featuredBooks = [] }) => {
   const goToSlide = (index) => setCurrentSlide(index);
 
   return (
-    <section className="relative w-full bg-gray-900 overflow-hidden aspect-video lg:aspect-[4/1]">
+    <section className="relative w-full bg-gray-900 overflow-hidden aspect-video lg:aspect-[3.5/1]">
       {/* Slides */}
       {slides.map((slide, index) => (
         <Link href={slide.link} key={slide.id}>
@@ -43,10 +44,17 @@ const HeroSection = ({ featuredBooks = [] }) => {
             className="absolute inset-0 w-full h-full transition-opacity duration-1000"
             style={{ opacity: index === currentSlide ? 1 : 0 }}
           >
+            {/* Desktop Image */}
             <img
               src={slide.image}
               alt=""
-              className="w-full h-full object-fill" // Stretches image to fill the container
+              className="hidden lg:block w-full h-full object-fill"
+            />
+            {/* Mobile Image */}
+            <img
+              src={slide.image_mob}
+              alt=""
+              className="lg:hidden w-full h-full object-fill"
             />
             <div className="absolute inset-0 bg-black bg-opacity-10"></div>
           </div>

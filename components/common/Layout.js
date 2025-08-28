@@ -25,7 +25,7 @@ const Layout = ({ children, title = 'Porboi', description = 'The all-time classi
         <title>{title}</title>
         <meta name="description" content={description} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/logo.svg" type="image/svg+xml" />
       </Head>
       
       <div className="min-h-screen flex flex-col">
