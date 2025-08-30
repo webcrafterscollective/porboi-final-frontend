@@ -3,11 +3,13 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Lock, User, Mail, MapPin, Phone, Truck } from 'lucide-react';
+import { Lock, User, Mail, MapPin, Phone, Truck, Tag } from 'lucide-react';
 import ProtectedRoute from '../components/common/ProtectedRoute';
 import { cartUtils } from '../utils/cartUtils';
 import { useAuth } from '../hooks/useAuth';
 import { validateEmail, validatePhone, validateZipCode } from '../utils/validation';
+import { countries } from '../lib/countries';
+import { api } from '../lib/api';
 
 const CheckoutPage = () => {
   const router = useRouter();
@@ -17,6 +19,9 @@ const CheckoutPage = () => {
   const [errors, setErrors] = useState({});
   const [shippingRates, setShippingRates] = useState([]);
   const [selectedShipping, setSelectedShipping] = useState(null);
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponLoading, setCouponLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -98,6 +103,27 @@ const CheckoutPage = () => {
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
+  const handleApplyCoupon = async () => {
+    if (!couponCode) return;
+    setCouponLoading(true);
+    try {
+      const coupon = await api.getCoupon(couponCode);
+      if (coupon) {
+        setAppliedCoupon(coupon);
+        setErrors(prev => ({ ...prev, coupon: '' }));
+      } else {
+        setErrors(prev => ({ ...prev, coupon: 'Invalid coupon code.' }));
+        setAppliedCoupon(null);
+      }
+    } catch (error) {
+      setErrors(prev => ({ ...prev, coupon: 'Could not apply coupon.' }));
+      setAppliedCoupon(null);
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+
   const validateForm = () => {
     const newErrors = {};
     if (!formData.firstName) newErrors.firstName = 'First name is required';
@@ -121,7 +147,18 @@ const CheckoutPage = () => {
     try {
       const subtotal = cart.reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0);
       const shipping = selectedShipping ? selectedShipping.shipping_charges : 0;
-      const totalAmount = subtotal + shipping;
+
+      let discount = 0;
+      if (appliedCoupon) {
+        if (appliedCoupon.discount_type === 'percent') {
+          discount = (subtotal * parseFloat(appliedCoupon.amount)) / 100;
+        } else {
+          discount = parseFloat(appliedCoupon.amount);
+        }
+      }
+
+      const totalAmount = subtotal + shipping - discount;
+
 
       const orderData = {
         payment_method: 'razorpay',
@@ -158,7 +195,8 @@ const CheckoutPage = () => {
             method_title: selectedShipping.courier_name || 'Shiprocket',
             total: shipping.toString()
           }
-        ]
+        ],
+        coupon_lines: appliedCoupon ? [{ code: appliedCoupon.code }] : []
       };
 
       const response = await fetch('/api/create-order', {
@@ -203,7 +241,18 @@ const CheckoutPage = () => {
 
   const subtotal = cart.reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0);
   const shipping = selectedShipping ? selectedShipping.shipping_charges : 0;
-  const total = subtotal + shipping;
+  
+  let discount = 0;
+  if (appliedCoupon) {
+    if (appliedCoupon.discount_type === 'percent') {
+      discount = (subtotal * parseFloat(appliedCoupon.amount)) / 100;
+    } else {
+      discount = parseFloat(appliedCoupon.amount);
+    }
+  }
+
+  const total = subtotal + shipping - discount;
+
 
   return (
     <ProtectedRoute>
@@ -277,7 +326,12 @@ const CheckoutPage = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Country *</label>
-                      <input type="text" name="country" value="India" disabled className="form-input bg-gray-100" />
+                      <select name="country" value={formData.country} onChange={handleInputChange} className={`form-select ${errors.country ? 'border-red-500' : ''}`} required>
+                        {countries.map(country => (
+                          <option key={country.code} value={country.code}>{country.name}</option>
+                        ))}
+                      </select>
+                      {errors.country && <p className="mt-1 text-sm text-red-600">{errors.country}</p>}
                     </div>
                   </div>
                 </div>
@@ -287,6 +341,13 @@ const CheckoutPage = () => {
               <div className="lg:col-span-1">
                 <div className="bg-white rounded-lg p-6 shadow-sm sticky top-8 space-y-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Summary</h3>
+                  
+                  <div className="flex gap-2">
+                    <input type="text" value={couponCode} onChange={(e) => setCouponCode(e.target.value.toUpperCase())} placeholder="Coupon Code" className={`form-input flex-grow ${errors.coupon ? 'border-red-500' : ''}`} />
+                    <button type="button" onClick={handleApplyCoupon} disabled={couponLoading} className="btn-secondary whitespace-nowrap">{couponLoading ? 'Applying...' : 'Apply'}</button>
+                  </div>
+                  {errors.coupon && <p className="mt-1 text-sm text-red-600">{errors.coupon}</p>}
+                  {appliedCoupon && <p className="mt-1 text-sm text-green-600">Coupon "{appliedCoupon.code}" applied!</p>}
 
                   {cart.map(item => (
                     <div key={item.id} className="flex items-center justify-between text-sm text-gray-700">
@@ -330,6 +391,12 @@ const CheckoutPage = () => {
                       <span>Subtotal</span>
                       <span>₹{subtotal.toFixed(2)}</span>
                     </div>
+                    {appliedCoupon && (
+                      <div className="flex justify-between text-green-600">
+                        <span>Discount ({appliedCoupon.code})</span>
+                        <span>-₹{discount.toFixed(2)}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between text-gray-600">
                       <span>Shipping</span>
                       <span>{selectedShipping ? `₹${shipping.toFixed(2)}` : '---'}</span>

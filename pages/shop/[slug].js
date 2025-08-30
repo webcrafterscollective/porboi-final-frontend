@@ -201,12 +201,26 @@ const ProductPage = ({ product, relatedProducts }) => {
     setIsWishlisted(!isWishlisted);
     toast.success(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist');
   };
+  
+  const ogImage = product.images?.[0]?.src || 'https://porboi.in/og-image.jpg';
+  const pageUrl = `https://porboi.in/shop/${product.slug}`;
+
 
   return (
     <>
       <Head>
         <title>{product.name} | porboi.in</title>
-        <meta name="description" content={product.short_description} />
+        <meta name="description" content={product.short_description.replace(/<[^>]*>?/gm, '')} />
+        
+        {/* --- Open Graph Meta Tags for Product Sharing --- */}
+        <meta property="og:title" content={product.name} />
+        <meta property="og:description" content={product.short_description.replace(/<[^>]*>?/gm, '')} />
+        <meta property="og:type" content="product" />
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        {/* --- End of OG Tags --- */}
       </Head>
 
       <div className="container section-padding">

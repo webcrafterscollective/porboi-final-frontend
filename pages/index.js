@@ -18,12 +18,16 @@ export default function Home({newBooks, featuredProducts, handmadeProducts, cate
         <title>Porboi.in - The All-Time Classics Bookstore</title>
         <meta name="description" content="Discover the all-time classics and bestselling books at porboi.in. Your premier destination for quality literature, fantasy, history, art, and love stories." />
         <meta name="keywords" content="bookstore, books, classics, bestsellers, fantasy, history, art, love stories, literature" />
+          {/* --- Updated Open Graph Tags --- */}
         <meta property="og:title" content="Porboi.in - The All-Time Classics Bookstore" />
         <meta property="og:description" content="Discover the all-time classics and bestselling books at Porboi.in." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://your-domain.com" />
-        <meta property="og:image" content="https://your-domain.com/images/og-image.jpg" />
-        <link rel="canonical" href="https://your-domain.com" />
+        <meta property="og:url" content="https://porboi.in" /> {/* Replace with your actual domain */}
+        <meta property="og:image" content="https://porboi.in/banner1_mob.png" /> {/* Absolute URL to your new image */}
+        <meta property="og:image:width" content="800" />
+        <meta property="og:image:height" content="450" />
+        {/* --- End of Updated Tags --- */}
+         <link rel="canonical" href="https://porboi.in" /> {/* Replace with your actual domain */}
       </Head>
 
       <div className="homepage">

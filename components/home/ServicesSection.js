@@ -4,12 +4,12 @@ import Link from 'next/link';
 
 const ServicesSection = () => {
   return (
-    <section className="relative section-padding bg-center" 
-             style={{
-               backgroundImage: "url('self-publish-bg.png')",
-               backgroundColor: '#111827', // Fallback color
-               backgroundSize: '100% 100%' // Stretches the image to fit the container
-             }}>
+   <section className="relative section-padding bg-center" 
+         style={{
+           backgroundImage: "url('self-publish-bg.png')",
+           backgroundColor: '#111827', // Fallback color
+           backgroundSize: 'cover' // This will fix the squishing
+         }}>
       {/* UPDATED: Consistent gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900/90 via-gray-900/70 to-black/60"></div>
       
