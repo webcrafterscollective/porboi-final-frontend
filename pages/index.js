@@ -23,7 +23,7 @@ export default function Home({newBooks, featuredProducts, handmadeProducts, cate
         <meta property="og:description" content="Discover the all-time classics and bestselling books at Porboi.in." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://porboi.in" /> {/* Replace with your actual domain */}
-        <meta property="og:image" content="https://porboi.in/banner1_mob.png" /> {/* Absolute URL to your new image */}
+        <meta property="og:image" content="https://porboi.in/banners/banner1_mob.png" /> {/* Absolute URL to your new image */}
         <meta property="og:image:width" content="800" />
         <meta property="og:image:height" content="450" />
         {/* --- End of Updated Tags --- */}

@@ -44,6 +44,8 @@ const OrderSuccessPage = ({ orderDetails, error }) => {
       });
     }
   };
+  
+  const subtotal = orderDetails.line_items.reduce((acc, item) => acc + parseFloat(item.total), 0);
 
   return (
     <>
@@ -99,7 +101,13 @@ const OrderSuccessPage = ({ orderDetails, error }) => {
         </table>
         <div className="flex justify-end">
           <div className="w-1/2">
-            <div className="flex justify-between text-gray-700"><span>Subtotal</span><span>{formatPrice(orderDetails.line_items.reduce((acc, item) => acc + parseFloat(item.total), 0), orderDetails.currency)}</span></div>
+            <div className="flex justify-between text-gray-700"><span>Subtotal</span><span>{formatPrice(subtotal, orderDetails.currency)}</span></div>
+            {parseFloat(orderDetails.discount_total) > 0 && (
+              <div className="flex justify-between text-green-600">
+                <span>Discount</span>
+                <span>-{formatPrice(orderDetails.discount_total, orderDetails.currency)}</span>
+              </div>
+            )}
             <div className="flex justify-between text-gray-700"><span>Shipping</span><span>{formatPrice(orderDetails.shipping_total, orderDetails.currency)}</span></div>
             <div className="flex justify-between font-bold text-xl mt-2 pt-2 border-t"><span>Total</span><span>{formatPrice(orderDetails.total, orderDetails.currency)}</span></div>
           </div>

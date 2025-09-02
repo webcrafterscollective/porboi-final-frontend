@@ -157,7 +157,7 @@ const CheckoutPage = () => {
         }
       }
 
-      const totalAmount = subtotal + shipping - discount;
+      const totalAmount = subtotal - discount + shipping;
 
 
       const orderData = {
@@ -251,7 +251,7 @@ const CheckoutPage = () => {
     }
   }
 
-  const total = subtotal + shipping - discount;
+  const total = subtotal - discount + shipping;
 
 
   return (
