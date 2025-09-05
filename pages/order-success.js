@@ -10,10 +10,10 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
-const OrderSuccessPage = ({ orderDetails, error }) => {
+const OrderSuccessPage = ({ orderDetails, priceBreakdown, error }) => {
   const router = useRouter();
 
-  if (router.isFallback || !orderDetails && !error) {
+  if (router.isFallback || (!orderDetails && !error)) {
     return <div className="min-h-screen flex items-center justify-center"><LoadingSpinner size="large" text="Loading order details..." /></div>;
   }
 
@@ -44,8 +44,6 @@ const OrderSuccessPage = ({ orderDetails, error }) => {
       });
     }
   };
-  
-  const subtotal = orderDetails.line_items.reduce((acc, item) => acc + parseFloat(item.total), 0);
 
   return (
     <>
@@ -101,15 +99,16 @@ const OrderSuccessPage = ({ orderDetails, error }) => {
         </table>
         <div className="flex justify-end">
           <div className="w-1/2">
-            <div className="flex justify-between text-gray-700"><span>Subtotal</span><span>{formatPrice(subtotal, orderDetails.currency)}</span></div>
-            {parseFloat(orderDetails.discount_total) > 0 && (
+            <div className="flex justify-between text-gray-700"><span>Subtotal</span><span>{formatPrice(priceBreakdown.subtotal, orderDetails.currency)}</span></div>
+            {priceBreakdown.discount > 0 && (
               <div className="flex justify-between text-green-600">
                 <span>Discount</span>
-                <span>-{formatPrice(orderDetails.discount_total, orderDetails.currency)}</span>
+                <span>-{formatPrice(priceBreakdown.discount, orderDetails.currency)}</span>
               </div>
             )}
-            <div className="flex justify-between text-gray-700"><span>Shipping</span><span>{formatPrice(orderDetails.shipping_total, orderDetails.currency)}</span></div>
-            <div className="flex justify-between font-bold text-xl mt-2 pt-2 border-t"><span>Total</span><span>{formatPrice(orderDetails.total, orderDetails.currency)}</span></div>
+            <div className="flex justify-between text-gray-700"><span>Shipping</span><span>{formatPrice(priceBreakdown.shipping, orderDetails.currency)}</span></div>
+            <div className="flex justify-between text-gray-700"><span>Tax</span><span>{formatPrice(priceBreakdown.tax, orderDetails.currency)}</span></div>
+            <div className="flex justify-between font-bold text-xl mt-2 pt-2 border-t"><span>Total</span><span>{formatPrice(priceBreakdown.total, orderDetails.currency)}</span></div>
           </div>
         </div>
         <div className="text-center mt-16 text-gray-600">
@@ -144,7 +143,7 @@ const OrderSuccessPage = ({ orderDetails, error }) => {
                 </div>
                 <div>
                   <span className="text-gray-600">Total Amount:</span>
-                  <p className="font-medium">{formatPrice(orderDetails.total, orderDetails.currency)}</p>
+                  <p className="font-medium">{formatPrice(priceBreakdown.total, orderDetails.currency)}</p>
                 </div>
                 <div>
                   <span className="text-gray-600">Email:</span>
@@ -163,14 +162,6 @@ const OrderSuccessPage = ({ orderDetails, error }) => {
                 <span>Download Receipt</span>
               </button>
             </div>
-            <div className="mt-12 bg-blue-50 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">What's Next?</h3>
-              <div className="space-y-3 text-sm text-gray-600 text-left">
-                <div className="flex items-center"><Mail className="w-4 h-4 mr-2 text-blue-500 flex-shrink-0" /><span>You'll receive an email confirmation within the next few minutes.</span></div>
-                <div className="flex items-center"><CheckCircle className="w-4 h-4 mr-2 text-green-500 flex-shrink-0" /><span>Your order will be processed and shipped within 1-2 business days.</span></div>
-                <div className="flex items-center"><Mail className="w-4 h-4 mr-2 text-blue-500 flex-shrink-0" /><span>You'll receive tracking information once your order ships.</span></div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -179,17 +170,24 @@ const OrderSuccessPage = ({ orderDetails, error }) => {
 };
 
 export async function getServerSideProps(context) {
-  const { order } = context.query;
+  const { order, total, subtotal, shipping, discount, tax } = context.query;
 
   if (!order) {
     return { props: { error: "No order ID found." } };
   }
 
   try {
-    // **FIX: Use the correct function to get order details**
-    const orderDetails = await api.getOrder(order); 
+    const orderDetails = await api.getOrder(order);
+    const priceBreakdown = {
+      total: parseFloat(total) || 0,
+      subtotal: parseFloat(subtotal) || 0,
+      shipping: parseFloat(shipping) || 0,
+      discount: parseFloat(discount) || 0,
+      tax: parseFloat(tax) || 0,
+    };
+
     return {
-      props: { orderDetails },
+      props: { orderDetails, priceBreakdown },
     };
   } catch (error) {
     console.error("Failed to fetch order details:", error);

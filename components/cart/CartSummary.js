@@ -1,10 +1,26 @@
 // components/cart/CartSummary.js
 import React from 'react';
 import Link from 'next/link';
+import { formatPrice } from '../../utils/formatters';
 
 const CartSummary = ({ cart, onCheckout }) => {
+  // --- Accurate Tax Calculation ---
+  const PRODUCT_TAX_RATE = 0.12; // 12% for taxable products
+
+  const calculateProductTax = (cartItems) => {
+    return cartItems.reduce((totalTax, item) => {
+      // Product is taxable if status is 'taxable'
+      if (item.tax_status === 'taxable') {
+        const itemTotal = parseFloat(item.price) * item.quantity;
+        totalTax += itemTotal * PRODUCT_TAX_RATE;
+      }
+      return totalTax;
+    }, 0);
+  };
+
   const subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
-  const total = subtotal; // Total is now the same as subtotal on this page
+  const tax = calculateProductTax(cart);
+  const total = subtotal + tax; // Shipping will be added at checkout
 
   return (
     <div className="bg-gray-50 rounded-lg p-6 h-fit">
@@ -13,25 +29,28 @@ const CartSummary = ({ cart, onCheckout }) => {
       <div className="space-y-3 mb-6">
         <div className="flex justify-between text-gray-600">
           <span>Subtotal ({cart.length} item{cart.length !== 1 ? 's' : ''})</span>
-          <span>₹{subtotal.toFixed(2)}</span>
+          <span>{formatPrice(subtotal)}</span>
         </div>
         
+        <div className="flex justify-between text-gray-600">
+          <span>Estimated Product Tax (12%)</span>
+          <span>{formatPrice(tax)}</span>
+        </div>
+
         <div className="border-t border-gray-200 pt-3">
           <div className="flex justify-between text-lg font-semibold text-gray-900">
-            <span>Total</span>
-            <span>₹{total.toFixed(2)}</span>
+            <span>Total (before shipping)</span>
+            <span>{formatPrice(total)}</span>
           </div>
         </div>
       </div>
 
-      {/* Shipping Notice */}
       <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4">
         <p className="text-sm text-blue-800">
-          Shipping costs will be calculated on the checkout page.
+          Shipping costs and shipping tax (18%) will be calculated on the next page.
         </p>
       </div>
 
-      {/* Checkout Button */}
       <Link href="/checkout">
         <button 
           className="w-full btn-primary mb-3"
@@ -41,14 +60,12 @@ const CartSummary = ({ cart, onCheckout }) => {
         </button>
       </Link>
 
-      {/* Continue Shopping */}
       <Link href="/shop">
         <button className="w-full btn-secondary text-center">
           Continue Shopping
         </button>
       </Link>
 
-      {/* Security Badge */}
       <div className="mt-6 text-center">
         <div className="inline-flex items-center text-sm text-gray-600">
           <svg className="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
@@ -62,3 +79,4 @@ const CartSummary = ({ cart, onCheckout }) => {
 };
 
 export default CartSummary;
+
